@@ -6,20 +6,18 @@ def slot_stop(slots)
   if input
     3.times { slots << rand(1..9) }
     puts "---------------"
-    puts "|#{slots[0]}|#{slots[3]}|#{slots[6]}|"
-    puts "|#{slots[1]}|#{slots[4]}|#{slots[7]}|"
-    puts "|#{slots[2]}|#{slots[5]}|#{slots[8]}|"
+    3.times.with_index { |i| puts "|#{slots[0 + i]}|#{slots[3 + i]}|#{slots[6 + i]}|" }
   end
 end
 
 while coins > 0
-  spent_coins = 0
   puts "---------------"
   puts "残りコイン数#{coins}"
   puts "ポイント#{points}"
   puts "何コイン入れますか？"
   puts "1(10コイン) 2(30コイン) 3(50コイン) 4(やめとく)"
   input = gets.to_i
+  spent_coins = 0
   case input
   when 1
     spent_coins = 10
@@ -33,17 +31,16 @@ while coins > 0
   else
     next
   end
-
   puts "---------------"
   if coins - spent_coins < 0
     puts "入れられるのは残りコイン数までです"
     next
   end
-  puts "エンターを3回押しましょう！"
   coins -= spent_coins
+
+  puts "エンターを3回押しましょう！"
   slots = []
   3.times { slot_stop(slots) }
-
   get_points = 0
   if slots.values_at(0, 3, 6).uniq.one?
     position = "上"
@@ -62,19 +59,14 @@ while coins > 0
   end
   if slots.values_at(1, 4, 7).uniq.one?
     position = "真ん中"
-    num = slots[1]
+    num = slots[4]
     get_points += 300
   end
 
   if get_points > 0
-    if spent_coins == 30
-      get_points *= 10
-    elsif spent_coins == 50
-      get_points *= 20
-    end
-    if num == 7
-      get_points *= 70
-    end
+    get_points *= 10 if spent_coins == 30
+    get_points *= 20 if spent_coins == 50
+    get_points *= 70 if num == 7
     get_coins = get_points / 2 + num * spent_coins
     puts "---------------"
     puts "#{position}に#{num}が揃いました！"
@@ -84,7 +76,5 @@ while coins > 0
     coins += get_coins
   end
 
-  if coins <= 0
-    puts "手持ちのコインが尽きました"
-  end
+  puts "手持ちのコインが尽きました" if coins == 0
 end
