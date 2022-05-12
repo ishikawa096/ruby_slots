@@ -6,7 +6,9 @@ def slot_stop(slots)
   if input
     3.times { slots << rand(1..9) }
     puts "---------------"
-    3.times.with_index { |i| puts "|#{slots[0 + i]}|#{slots[3 + i]}|#{slots[6 + i]}|" }
+    3.times.with_index do |i|
+      puts "|#{slots[0 + i]}|#{slots[3 + i]}|#{slots[6 + i]}|"
+    end
   end
 end
 
@@ -37,7 +39,6 @@ while coins > 0
     next
   end
   coins -= spent_coins
-
   puts "エンターを3回押しましょう！"
   slots = []
   3.times { slot_stop(slots) }
@@ -56,6 +57,7 @@ while coins > 0
     position = "斜め"
     num = slots[4]
     get_points += 200
+    get_points += 200 if slots.values_at(0, 2, 4, 6, 8).uniq.one?
   end
   if slots.values_at(1, 4, 7).uniq.one?
     position = "真ん中"
@@ -68,7 +70,6 @@ while coins > 0
     get_points *= 20 if spent_coins == 50
     get_points *= 70 if num == 7
     get_coins = get_points / 2 + num * spent_coins
-    puts "---------------"
     puts "#{position}に#{num}が揃いました！"
     puts "#{get_points}ポイント獲得！"
     puts "#{get_coins}コイン獲得！"
