@@ -1,7 +1,7 @@
 coins = 100
 points = 0
 
-def slot_stop(slots)
+def stop_slots(slots)
   input = gets.to_i
   if input
     3.times { slots << rand(1..9) }
@@ -9,6 +9,18 @@ def slot_stop(slots)
     3.times.with_index do |i|
       puts "|#{slots[0 + i]}|#{slots[3 + i]}|#{slots[6 + i]}|"
     end
+  end
+end
+
+def get_position(slots)
+  positions = []
+  positions << "上" if slots.values_at(0, 3, 6).uniq.one?
+  positions << "下" if slots.values_at(2, 5, 8).uniq.one?
+  positions << "中央" if slots.values_at(1, 4, 7).uniq.one?
+  if slots.values_at(0, 2, 4, 6, 8).uniq.one?
+    positions << "X字型"
+  elsif slots.values_at(0, 4, 8).uniq.one? || slots.values_at(2, 4, 6).uniq.one?
+    positions << "斜め"
   end
 end
 
@@ -39,38 +51,26 @@ while coins > 0
     next
   end
   coins -= spent_coins
-  puts "エンターを3回押しましょう！"
   slots = []
-  3.times { slot_stop(slots) }
-  get_points = 0
-  if slots.values_at(0, 3, 6).uniq.one?
-    position = "上"
-    num = slots[0]
-    get_points += 100
-  end
-  if slots.values_at(2, 5, 8).uniq.one?
-    position = "下"
-    num = slots[2]
-    get_points += 100
-  end
-  if slots.values_at(0, 4, 8).uniq.one? || slots.values_at(2, 4, 6).uniq.one?
-    position = "斜め"
-    num = slots[4]
-    get_points += 200
-    get_points += 200 if slots.values_at(0, 2, 4, 6, 8).uniq.one?
-  end
-  if slots.values_at(1, 4, 7).uniq.one?
-    position = "真ん中"
-    num = slots[4]
-    get_points += 300
-  end
+  puts "エンターを3回押しましょう！"
+  3.times { stop_slots(slots) }
 
-  if get_points > 0
+  unless get_position(slots).nil?
+    positions = []
+    nums = []
+    get_points = 0
+    positions.push(get_position(slots)).flatten!
+    nums << slots[0] && get_points += 100 if positions.include?("上")
+    nums << slots[2] && get_points += 100 if positions.include?("下")
+    nums << slots[4] && get_points += 300 if positions.include?("中央")
+    nums << slots[4] && get_points += 400 if positions.include?("X字型")
+    nums << slots[4] && get_points += 200 if positions.include?("斜め")
     get_points *= 10 if spent_coins == 30
     get_points *= 20 if spent_coins == 50
-    get_points *= 70 if num == 7
-    get_coins = get_points / 2 + num * spent_coins
-    puts "#{position}に#{num}が揃いました！"
+    get_points *= 70 if nums.include?(7)
+    get_coins = get_points / 2 + nums.max * spent_coins
+    puts "---------------"
+    positions.zip(nums) { |p, n| puts "#{p}に#{n}が揃いました！" }
     puts "#{get_points}ポイント獲得！"
     puts "#{get_coins}コイン獲得！"
     points += get_points
