@@ -12,8 +12,7 @@ def stop_slots(slots)
   end
 end
 
-def get_position(slots)
-  positions = []
+def get_position(slots, positions)
   positions << "上" if slots.values_at(0, 3, 6).uniq.one?
   positions << "下" if slots.values_at(2, 5, 8).uniq.one?
   positions << "中央" if slots.values_at(1, 4, 7).uniq.one?
@@ -52,14 +51,14 @@ while coins > 0
   end
   coins -= spent_coins
   slots = []
+  positions = []
   puts "エンターを3回押しましょう！"
   3.times { stop_slots(slots) }
+  get_position(slots, positions)
 
-  unless get_position(slots).nil?
-    positions = []
+  unless positions.empty?
     nums = []
     get_points = 0
-    positions.push(get_position(slots)).flatten!
     nums << slots[0] && get_points += 100 if positions.include?("上")
     nums << slots[2] && get_points += 100 if positions.include?("下")
     nums << slots[4] && get_points += 300 if positions.include?("中央")
