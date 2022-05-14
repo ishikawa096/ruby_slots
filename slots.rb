@@ -58,22 +58,22 @@ while coins > 0
 
   unless positions.empty?
     nums = []
-    get_points = 0
-    nums << slots[0] && get_points += 100 if positions.include?("上")
-    nums << slots[2] && get_points += 100 if positions.include?("下")
-    nums << slots[4] && get_points += 300 if positions.include?("中央")
-    nums << slots[4] && get_points += 400 if positions.include?("X字型")
-    nums << slots[4] && get_points += 200 if positions.include?("斜め")
-    get_points *= 10 if spent_coins == 30
-    get_points *= 20 if spent_coins == 50
-    get_points *= 70 if nums.include?(7)
-    get_coins = get_points / 2 + nums.max * spent_coins
+    got_points = 0
+    nums << slots[0] && got_points += 100 if positions.include?("上")
+    nums << slots[2] && got_points += 100 if positions.include?("下")
+    nums << slots[4] && got_points += 300 if positions.include?("中央")
+    nums << slots[4] && got_points += 400 if positions.include?("X字型")
+    nums << slots[4] && got_points += 200 if positions.include?("斜め")
+    got_points *= 10 if spent_coins == 30
+    got_points *= 20 if spent_coins == 50
+    got_points *= 70 if nums.include?(7)
+    got_coins = got_points / 2 + nums.max * spent_coins
     puts "---------------"
     positions.zip(nums) { |p, n| puts "#{p}に#{n}が揃いました！" }
-    puts "#{get_points}ポイント獲得！"
-    puts "#{get_coins}コイン獲得！"
-    points += get_points
-    coins += get_coins
+    puts "#{got_points}ポイント獲得！"
+    puts "#{got_coins}コイン獲得！"
+    points += got_points
+    coins += got_coins
   end
 
   puts "手持ちのコインが尽きました" if coins == 0
